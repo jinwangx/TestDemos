@@ -1,6 +1,5 @@
 package com.jw.croplibrary
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import com.jw.croplibrary.img.AspectRatio
@@ -83,10 +82,10 @@ object CropLibrary {
         context.sendBroadcast(mediaScanIntent)
     }
 
-    fun init(application: Application, baseCachePath: String) {
+    fun init(context: Context, baseCachePath: String) {
         CACHE_IMG_CROP = "$baseCachePath/雷小锋"
         CACHE_VIDEO_CROP = "$baseCachePath/雷小锋"
         CACHE_VIDEO_CROP_COVER = "$baseCachePath/crop/video/cover"
-        BaseUtils.init(application)
+        BaseUtils.init(context)
     }
 }

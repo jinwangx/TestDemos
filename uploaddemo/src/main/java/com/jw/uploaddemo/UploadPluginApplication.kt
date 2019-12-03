@@ -8,7 +8,6 @@ import android.util.Log
 import com.jw.cameralibrary.CameraLibrary
 import com.jw.croplibrary.CropLibrary
 import com.jw.galarylibrary.GalaryLibrary
-import com.jw.library.ContextUtil
 import com.jw.library.utils.RomUtil
 import com.jw.uilibrary.base.application.BaseApplication
 import com.jw.voicelibrary.VoiceLibrary
@@ -19,7 +18,6 @@ class UploadPluginApplication : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
         application = this
-        ContextUtil.init(this)
         GalaryLibrary.init()
         CameraLibrary.init(externalCacheDir.absolutePath)
         CropLibrary.init(this, externalCacheDir.absolutePath)

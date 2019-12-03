@@ -11,23 +11,23 @@ import java.util.*
 
 class ImagePageAdapter(activity: Activity, images: ArrayList<ImageItem>) :
     BasePageAdapter<ImageItem>(activity, images) {
-    var mListener: PhotoViewClickListener? = null
+    private var mListener: PhotoViewClickListener? = null
 
     fun setPhotoViewClickListener(listener: PhotoViewClickListener) {
         this.mListener = listener
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val photoView = PhotoView(this.mActivity)
-        val imageItem = this.mItems[position]
+        val photoView = PhotoView(mActivity)
+        val imageItem = mItems[position]
         GlideImageLoader.displayImage(
-            this.mActivity,
+            mActivity,
             imageItem.path!!,
             photoView
         )
         photoView.setOnPhotoTapListener { view, x, y ->
             if (mListener != null) {
-                mListener!!.OnPhotoTapListener(view, x, y)
+                mListener!!.onPhotoTapListener(view, x, y)
             }
         }
         container.addView(photoView)
@@ -35,6 +35,6 @@ class ImagePageAdapter(activity: Activity, images: ArrayList<ImageItem>) :
     }
 
     interface PhotoViewClickListener {
-        fun OnPhotoTapListener(view: View, x: Float, y: Float)
+        fun onPhotoTapListener(view: View, x: Float, y: Float)
     }
 }

@@ -10,7 +10,6 @@ import com.jw.library.loader.GlideImageLoader
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
 import com.jw.library.model.VideoItem
-import com.jw.uploadlibrary.adapter.ProgressAdapter
 import com.jw.uploadlibrary.databinding.ItemUploadProgressBinding
 
 /**
@@ -74,7 +73,7 @@ class UploadProgressView @JvmOverloads constructor(
         binding.ivError.setOnClickListener {
             mUploadItemListener!!.reUpload(mPosition, mItem)
             binding.apply {
-                state = ProgressAdapter.STATE_START
+                state = STATE_START
                 progress = 0
                 title = originTitle
             }
@@ -83,16 +82,16 @@ class UploadProgressView @JvmOverloads constructor(
 
     fun refresh(state1: Int, progress1: Int?, des: String?) {
         when (state1) {
-            ProgressAdapter.STATE_START -> {
+            STATE_START -> {
                 binding.apply {
-                    state = ProgressAdapter.STATE_START
+                    state = STATE_START
                     progress = 0
                     title = originTitle
                 }
             }
-            ProgressAdapter.STATE_PROGRESS -> {
+            STATE_PROGRESS -> {
                 binding.apply {
-                    state = ProgressAdapter.STATE_PROGRESS
+                    state = STATE_PROGRESS
                     progress = if (progress1!! > 100)
                         99
                     else
@@ -102,27 +101,27 @@ class UploadProgressView @JvmOverloads constructor(
                 }
                 if (progress1 == 100) {
                     binding.apply {
-                        state = ProgressAdapter.STATE_END
+                        state = STATE_END
                         title = "上传成功！"
                     }
                 }
             }
-            ProgressAdapter.STATE_END -> {
+            STATE_END -> {
                 binding.apply {
-                    state = ProgressAdapter.STATE_END
+                    state = STATE_END
                     title = "上传成功！"
                 }
             }
-            ProgressAdapter.STATE_ERROR -> {
+            STATE_ERROR -> {
                 binding.apply {
-                    state = ProgressAdapter.STATE_ERROR
+                    state = STATE_ERROR
                     progress = 0
                     title = originTitle?.substring(0, 4) + "上传失败,请刷新"
                 }
             }
-            ProgressAdapter.STATE_COMPRESSING -> {
+            STATE_COMPRESSING -> {
                 binding.apply {
-                    state = ProgressAdapter.STATE_COMPRESSING
+                    state = STATE_COMPRESSING
                     title = des
                     progress = 0
                 }
@@ -134,15 +133,15 @@ class UploadProgressView @JvmOverloads constructor(
         mUploadItemListener = uploadItemListener
     }
 
+    interface UploadItemListener {
+        fun reUpload(position: Int, item: BaseItem)
+    }
+
     companion object {
         const val STATE_START = 0
         const val STATE_PROGRESS = 1
         const val STATE_END = 2
         const val STATE_ERROR = 3
         const val STATE_COMPRESSING = 4
-    }
-
-    interface UploadItemListener {
-        fun reUpload(position: Int, item: BaseItem)
     }
 }

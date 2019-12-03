@@ -28,7 +28,7 @@ class FolderAdapter<Data>(private val mActivity: Activity, mFolders: MutableList
     private val mInflater: LayoutInflater
     private val mSize: Int
     private var mFolders: MutableList<Folder<Data>>? = null
-    public var selectIndex = 0
+    var selectIndex = 0
         set(i) {
             if (this.selectIndex != i) {
                 field = i
@@ -103,10 +103,10 @@ class FolderAdapter<Data>(private val mActivity: Activity, mFolders: MutableList
     }
 
     internal class ViewHolder constructor(view: View) {
-        internal var cover: ImageView = view.findViewById(R.id.iv_cover)
-        internal var folderName: TextView = view.findViewById(R.id.tv_folder_name)
-        internal var imageCount: TextView = view.findViewById(R.id.tv_image_count)
-        internal var folderCheck: ImageView = view.findViewById(R.id.iv_folder_check)
+        var cover: ImageView = view.findViewById(R.id.iv_cover)
+        var folderName: TextView = view.findViewById(R.id.tv_folder_name)
+        var imageCount: TextView = view.findViewById(R.id.tv_image_count)
+        var folderCheck: ImageView = view.findViewById(R.id.iv_folder_check)
 
         init {
             view.tag = this

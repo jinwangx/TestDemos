@@ -48,9 +48,9 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
     BasePicker.OnItemSelectedListener<ITEM>,
     IPreview<ITEM> {
 
-    var mPicker = picker
+    private var mPicker = picker
     lateinit var mItems: ArrayList<ITEM>
-    var mCurrentPosition = 0
+    private var mCurrentPosition = 0
     lateinit var mRvAdapter: BasePageAdapter<ITEM>
     lateinit var mThumbAdapter: ThumbPreviewAdapter<ITEM>
     var isFromItems = false
@@ -133,7 +133,7 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
 
     }
 
-    override fun OnPhotoTapListener(view: View, x: Float, y: Float) {
+    override fun onPhotoTapListener(view: View, x: Float, y: Float) {
         when (top_bar.visibility) {
             View.VISIBLE -> {
                 mBinding.apply {

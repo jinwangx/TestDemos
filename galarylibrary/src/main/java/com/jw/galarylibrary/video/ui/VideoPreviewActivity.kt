@@ -21,11 +21,11 @@ class VideoPreviewActivity : BasePreviewActivity<VideoItem>(VideoPicker),
         (mRvAdapter as VideoPageAdapter).setPhotoViewClickListener(this)
     }
 
-    override fun OnImageClickListener(videoItem: VideoItem) {
-        OnPhotoTapListener(View(this), 0F, 0F)
+    override fun onImageClickListener(videoItem: VideoItem) {
+        onPhotoTapListener(View(this), 0F, 0F)
     }
 
-    override fun OnStartClickListener(videoItem: VideoItem) {
+    override fun onStartClickListener(videoItem: VideoItem) {
         ThemeUtils.openFile(this, File(videoItem.path))
     }
 

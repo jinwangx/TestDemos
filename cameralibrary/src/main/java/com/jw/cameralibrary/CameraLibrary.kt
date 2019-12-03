@@ -20,7 +20,7 @@ object CameraLibrary {
     var CACHE_VIDEO_PATH_COVER: String? = null   //视频录制封面缓存路径
     var SHOT_TYPE = 4   //相机模式 4:拍照、摄像都可 5：仅拍照 6:仅录制
     var SHOT_MODEL = 2   //相机样式 1：长视频 2：短视频
-    var isCrop = false
+    var isCrop = false  //是否强制裁剪
 
     fun galleryAddPic(context: Context, path: String) {
         val uri = BitmapUtil.saveMedia2Galary(context, path)

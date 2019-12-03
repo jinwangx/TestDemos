@@ -20,16 +20,16 @@ open class BasePageAdapter<ITEM>(var mActivity: Activity, var mItems: ArrayList<
     private var mScreenHeight: Int = 0
 
     init {
-        this.mScreenWidth = ThemeUtils.getWindowWidth(mActivity)
-        this.mScreenHeight = ThemeUtils.getWindowHeight(mActivity)
+        mScreenWidth = ThemeUtils.getWindowWidth(mActivity)
+        mScreenHeight = ThemeUtils.getWindowHeight(mActivity)
     }
 
     fun setData(images: ArrayList<ITEM>) {
-        this.mItems = images
+        mItems = images
     }
 
     override fun getCount(): Int {
-        return this.mItems.size
+        return mItems.size
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {

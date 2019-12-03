@@ -1,6 +1,6 @@
 package com.jw.uploadlibrary
 
-import android.app.Application
+import android.content.Context
 import com.facebook.stetho.Stetho
 import com.jw.uploadlibrary.http.ScHttpClient
 import com.jw.uploadlibrary.http.ScHttpConfig
@@ -29,12 +29,12 @@ object UploadLibrary {
     val isCompress = false
     var CACHE_VIDEO_COMPRESS: String? = null   //压缩视频缓存路径
 
-    fun init(application: Application) {
+    fun init(context: Context) {
         //初始化http请求引擎
         ScHttpClient.init(ScHttpConfig.create().setBaseUrl(BASE_HTTP))
         //HttpUtils.init(ScHttpClient.getOkHttpClient())
         //stetho调试集成
-        Stetho.initializeWithDefaults(application)
-        UploadManager.instance.init(application)
+        Stetho.initializeWithDefaults(context)
+        UploadManager.instance.init(context)
     }
 }

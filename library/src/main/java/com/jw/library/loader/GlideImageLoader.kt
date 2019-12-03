@@ -5,6 +5,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.jw.library.R
 import com.jw.library.utils.RotateTransformation
 
 
@@ -13,8 +14,8 @@ import com.jw.library.utils.RotateTransformation
  */
 object GlideImageLoader {
     private var options = RequestOptions()
-        //.error(R.drawable.ic_default_image)
-        //.placeholder(R.drawable.ic_default_image)
+        .error(R.drawable.ic_default_image)
+        .placeholder(R.drawable.ic_default_image)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 
     /**

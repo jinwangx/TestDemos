@@ -89,7 +89,6 @@ open class ProgressActivity : BaseBindingActivity<ActivityProgressBinding>(),
         else
             addProgressView(UploadLibrary.TYPE_UPLOAD_VOICE, items)
         val keyReqInfo = KeyReqInfo()
-        keyReqInfo.orgId = UploadLibrary.orgId
         for (image in items) {
             val fileInfo = KeyReqInfo.FileInfo()
             fileInfo.name = image.name

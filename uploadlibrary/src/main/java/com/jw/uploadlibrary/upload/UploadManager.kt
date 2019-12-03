@@ -1,10 +1,9 @@
 package com.jw.uploadlibrary.upload
 
 import android.annotation.SuppressLint
-import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import com.jw.library.ContextUtil.context
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
 import com.jw.library.utils.BitmapUtil
@@ -36,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
@@ -47,13 +47,14 @@ import java.util.concurrent.Executors
  * 描述：上传管理类
  */
 class UploadManager {
-    private var application: Application? = null
-    private var serviceConfig: CosXmlServiceConfig? = null
+    private lateinit var context: Context
+    private lateinit var serviceConfig: CosXmlServiceConfig
     private var callBack: UploadProgressCallBack? = null
-    private val threadPool = Executors.newFixedThreadPool(UploadLibrary.maxUploadThreadSize)
+    private lateinit var threadPool: ExecutorService
 
-    fun init(application: Application) {
-        this.application = application
+    fun init(context: Context) {
+        this.context = context
+        threadPool = Executors.newFixedThreadPool(UploadLibrary.maxUploadThreadSize)
         serviceConfig = CosXmlServiceConfig.Builder()
             .setAppidAndRegion(appid, region)
             .builder()
@@ -103,17 +104,17 @@ class UploadManager {
      * @param path String
      */
     fun excUploadImgOrVoice(index: Int, item: BaseItem, authorizationInfo: AuthorizationInfo) {
-        val transferConfig = TransferConfig.Builder().build()
-        val credentialProvider = MyCredentialProvider(
-            authorizationInfo.tmpSecretId,
-            authorizationInfo.tmpSecretKey,
-            authorizationInfo.sessionToken
-        )
         threadPool.submit {
-            val cosXmlService = CosXmlService(application, serviceConfig, credentialProvider)
+            val transferConfig = TransferConfig.Builder().build()
+            val credentialProvider = MyCredentialProvider(
+                authorizationInfo.tmpSecretId,
+                authorizationInfo.tmpSecretKey,
+                authorizationInfo.sessionToken
+            )
+            val cosXmlService = CosXmlService(context, serviceConfig, credentialProvider)
             val transferManager = TransferManager(cosXmlService, transferConfig)
             val cosxmlUploadTask: COSXMLUploadTask
-            if (item is ImageItem) {
+            if (item is ImageItem && item.orientation != 0) {
                 val bitmap = BitmapUtil.rotateBitmapByDegree(item.path!!, item.orientation)
                 cosxmlUploadTask = transferManager.upload(
                     authorizationInfo.bucket,

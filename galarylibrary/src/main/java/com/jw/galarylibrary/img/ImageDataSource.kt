@@ -2,7 +2,6 @@ package com.jw.galarylibrary.img
 
 import android.database.Cursor
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.LoaderManager.LoaderCallbacks
@@ -23,7 +22,7 @@ class ImageDataSource(
 ) : LoaderCallbacks<Cursor> {
 
     private val IMAGE_PROJECTION = arrayOf(
-        MediaStore.Images.Media.DISPLAY_NAME,
+        Media.DISPLAY_NAME,
         Media.DATA,
         Media.SIZE,
         Media.WIDTH,
@@ -33,7 +32,7 @@ class ImageDataSource(
         Media.ORIENTATION
     )
     private val imageFolders = ArrayList<Folder<ImageItem>>()
-    internal var cursorLoader: CursorLoader? = null
+    private var cursorLoader: CursorLoader? = null
 
     init {
         val loaderManager = activity.supportLoaderManager
@@ -145,7 +144,7 @@ class ImageDataSource(
     }
 
     companion object {
-        val LOADER_ALL = 0
-        val LOADER_CATEGORY = 1
+        private const val LOADER_ALL = 0
+        private const val LOADER_CATEGORY = 1
     }
 }
