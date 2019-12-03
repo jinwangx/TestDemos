@@ -83,8 +83,8 @@ object CropLibrary {
     }
 
     fun init(context: Context, baseCachePath: String) {
-        CACHE_IMG_CROP = "$baseCachePath/雷小锋"
-        CACHE_VIDEO_CROP = "$baseCachePath/雷小锋"
+        CACHE_IMG_CROP = "$baseCachePath/插件"
+        CACHE_VIDEO_CROP = "$baseCachePath/插件"
         CACHE_VIDEO_CROP_COVER = "$baseCachePath/crop/video/cover"
         BaseUtils.init(context)
     }

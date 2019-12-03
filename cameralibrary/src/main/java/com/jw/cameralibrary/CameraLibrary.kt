@@ -30,8 +30,8 @@ object CameraLibrary {
     }
 
     fun init(baseCachePath: String) {
-        CACHE_IMG_PATH = "$baseCachePath/雷小锋"
-        CACHE_VIDEO_PATH = "$baseCachePath/雷小锋"
+        CACHE_IMG_PATH = "$baseCachePath/插件"
+        CACHE_VIDEO_PATH = "$baseCachePath/插件"
         CACHE_VIDEO_PATH_COVER = "$baseCachePath/shot/video/cover"
     }
 
