@@ -5,9 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaScannerConnection
 import android.os.Build
-import android.os.Environment
 import android.support.annotation.RequiresApi
 import android.util.Log
 import android.view.View
@@ -23,7 +21,6 @@ import com.jw.library.model.BaseItem
 import com.jw.library.model.VoiceItem
 import com.jw.library.ui.BaseBindingActivity
 import com.jw.library.utils.BitmapUtil
-import com.jw.library.utils.RomUtil
 import com.jw.library.utils.ThemeUtils
 import com.jw.uilibrary.base.application.BaseApplication
 import com.jw.uploaddemo.databinding.ActivityMainBinding
@@ -50,13 +47,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     override fun doConfig(arguments: Intent) {
         //login()
-        // 刷新相册
-        if (RomUtil.isEmui()) {
-            MediaScannerConnection.scanFile(
-                this, arrayOf(Environment.getExternalStorageDirectory().toString()), null
-            ) { path, uri ->
-            }
-        }
         mBinding.apply {
             clickListener = View.OnClickListener {
                 when (it.id) {
