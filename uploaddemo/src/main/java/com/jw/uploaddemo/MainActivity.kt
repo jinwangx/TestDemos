@@ -46,7 +46,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun getLayoutId() = R.layout.activity_main
 
     override fun doConfig(arguments: Intent) {
-        //login()
+        if (UploadLibrary.isEnable)
+            login()
         mBinding.apply {
             clickListener = View.OnClickListener {
                 when (it.id) {
@@ -112,6 +113,19 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     @SuppressLint("CheckResult")
     private fun login() {
+        UploadLibrary.setCosUploadConfig(
+            "",
+            "",
+            ""
+        )
+        UploadLibrary.setUserConfig(
+            0,
+            "",
+            1,
+            2,
+            0
+        )
+        UploadLibrary.init(this)
         val userInfo = UserInfo()
         userInfo.phone = UploadLibrary.phone
         userInfo.pwd = UploadLibrary.pwd
@@ -322,7 +336,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
                 "name：" + item.name + "  mimeType：" + item.mimeType + "  size：" + item.size + "  path：" + item.path
             )
         }
-        //ProgressActivity.start(this, type, items)
+        if (UploadLibrary.isEnable)
+            ProgressActivity.start(this, type, items)
     }
 
     private fun toShotRecordMainActivity() {

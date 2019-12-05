@@ -13,6 +13,7 @@ import com.jw.library.ColorCofig
 import com.jw.library.model.BaseItem
 import com.jw.library.model.VideoItem
 import com.jw.library.ui.BaseBindingActivity
+import com.jw.library.utils.ThemeUtils
 import com.jw.uploadlibrary.UploadProgressView.Companion.STATE_ERROR
 import com.jw.uploadlibrary.UploadProgressView.Companion.STATE_PROGRESS
 import com.jw.uploadlibrary.databinding.ActivityProgressBinding
@@ -45,11 +46,28 @@ open class ProgressActivity : BaseBindingActivity<ActivityProgressBinding>(),
     var error: String? = null
     var authorizationInfo: AuthorizationInfo? = null
     var orgInfo: OrgInfo? = null
+    var mStartingTimeMillis: Long = System.currentTimeMillis()
+    var uploadTimeOutTime: Int = UploadLibrary.uploadTimeOutTime
+    private var isShouldInterrupt: Boolean = false //线程中断标记(计时)
+    private val timeRunnable = Runnable {
+        while (!isShouldInterrupt) {
+            val passTime = (System.currentTimeMillis() - mStartingTimeMillis).toInt()
+            if (passTime - uploadTimeOutTime * 1000 > 0) {
+                isShouldInterrupt = true
+                runOnUiThread {
+                    UploadManager.instance.cancel()
+                    ThemeUtils.show(this, "请求超时，请重新上传！")
+                    setConfirmEnable(true)
+                }
+            }
+        }
+    }
 
     override fun getLayoutId() = R.layout.activity_progress
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread(timeRunnable).start()
         setConfirmButtonBg(mBinding.topBar.btnOk)
         mBinding.apply {
             topBar.tvDes.text = "上传进度"
@@ -255,6 +273,12 @@ open class ProgressActivity : BaseBindingActivity<ActivityProgressBinding>(),
             mBinding.ll.addView(uploadProgressView)
             progressViewList.add(uploadProgressView)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isShouldInterrupt = true
+        UploadManager.instance.destroy()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

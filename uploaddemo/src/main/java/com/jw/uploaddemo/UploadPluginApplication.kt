@@ -22,7 +22,6 @@ class UploadPluginApplication : BaseApplication() {
         CameraLibrary.init(externalCacheDir.absolutePath)
         CropLibrary.init(this, externalCacheDir.absolutePath)
         VoiceLibrary.init(externalCacheDir.absolutePath)
-        //UploadLibrary.init(this)
         initFFmpegBinary(this)
         if (RomUtil.isEmui()) {
             // 刷新相册

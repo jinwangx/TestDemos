@@ -50,7 +50,9 @@ class UploadManager {
     private lateinit var context: Context
     private lateinit var serviceConfig: CosXmlServiceConfig
     private var callBack: UploadProgressCallBack? = null
-    private lateinit var threadPool: ExecutorService
+    private var threadPool: ExecutorService? = null
+    private var imgUploadTasks: ArrayList<COSXMLUploadTask> = ArrayList()
+    private var videoUploadTasks: ArrayList<TXUGCPublish> = ArrayList()
 
     fun init(context: Context) {
         this.context = context
@@ -67,6 +69,7 @@ class UploadManager {
      */
     @SuppressLint("CheckResult")
     fun uploadImgOrVoice(keyReqInfo: KeyReqInfo, items: ArrayList<out BaseItem>) {
+        imgUploadTasks.clear()
         //获取存储桶
         ScHttpClient.getService(GoChatService::class.java).getAuthorization(ticket, keyReqInfo)
             .subscribeOn(Schedulers.io())
@@ -89,6 +92,7 @@ class UploadManager {
      * @param videos ArrayList<VideoItem>
      */
     fun uploadVideo(orgInfo: OrgInfo, videos: ArrayList<BaseItem>) {
+        videoUploadTasks.clear()
         for (video in videos) {
             val index = videos.indexOf(video)
             excUploadVideo(orgInfo, index, video)
@@ -104,7 +108,7 @@ class UploadManager {
      * @param path String
      */
     fun excUploadImgOrVoice(index: Int, item: BaseItem, authorizationInfo: AuthorizationInfo) {
-        threadPool.submit {
+        threadPool!!.submit {
             val transferConfig = TransferConfig.Builder().build()
             val credentialProvider = MyCredentialProvider(
                 authorizationInfo.tmpSecretId,
@@ -160,12 +164,13 @@ class UploadManager {
                     "Task state:" + state.name
                 )
             }
+            imgUploadTasks.add(cosxmlUploadTask)
         }
     }
 
     @SuppressLint("CheckResult")
     fun excUploadVideo(orgInfo: OrgInfo, index: Int, video: BaseItem) {
-        threadPool.submit {
+        threadPool!!.submit {
             ScHttpClient.getService(GoChatService::class.java).getVideoSign(ticket, orgInfo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -177,7 +182,6 @@ class UploadManager {
                     val param = TXUGCPublishTypeDef.TXPublishParam()
                     param.signature = sign
                     param.videoPath = video.path
-
                     mVideoPublish.setListener(object : TXUGCPublishTypeDef.ITXVideoPublishListener {
                         override fun onPublishProgress(uploadBytes: Long, totalBytes: Long) {
                             val progress = (100 * uploadBytes / totalBytes).toInt()
@@ -206,8 +210,21 @@ class UploadManager {
                         }
                     })
                     mVideoPublish.publishVideo(param)
+                    videoUploadTasks.add(mVideoPublish)
                 }
         }
+    }
+
+    fun cancel() {
+        for (task in imgUploadTasks)
+            task.cancel()
+        for (task in videoUploadTasks)
+            task.canclePublish()
+    }
+
+    fun destroy() {
+        imgUploadTasks.clear()
+        videoUploadTasks.clear()
     }
 
     fun setUploadProgressListener(callBack: UploadProgressCallBack) {

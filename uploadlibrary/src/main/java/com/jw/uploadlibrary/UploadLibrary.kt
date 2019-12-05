@@ -14,24 +14,62 @@ import com.jw.uploadlibrary.upload.UploadManager
  * 描述：
  */
 object UploadLibrary {
-    var BASE_HTTP = ""
-    var region = ""
-    var appid = ""
-    var orgId: Long = 0
-    const val phone: Long = 13407194558
-    const val pwd: String = "6234ef5192de321f27b0d7b18ba02f8166af27df"
-    const val type: Int = 2
-    var ticket: Long = 1564198433438
+    var baseUrl: String? = null
+    var region: String? = null
+    var appid: String? = null
+    var orgId: Long = 1
+    var phone: Long? = null
+    var pwd: String? = null
+    var type: Int = 2
+    var ticket: Long = 0
     const val TYPE_UPLOAD_VIDEO = 0   //视频
     const val TYPE_UPLOAD_IMG = 1  //图片
     const val TYPE_UPLOAD_VOICE = 2   //语音
     var maxUploadThreadSize = 2
-    val isCompress = false
-    var CACHE_VIDEO_COMPRESS: String? = null   //压缩视频缓存路径
+    var uploadTimeOutTime = 60
+    var isEnable = false
+
+    /**
+     * 设置腾讯云上传配置
+     * @param baseUrl String
+     * @param appid String
+     * @param region String
+     * @param maxUploadThreadSize Int //同时上传线程数
+     * @param uploadTimeOutTime Int //超时时间，单位为s
+     */
+    fun setCosUploadConfig(
+        baseUrl: String,
+        appid: String,
+        region: String,
+        maxUploadThreadSize: Int = 2,
+        uploadTimeOutTime: Int = 60
+    ) {
+        this.baseUrl = baseUrl
+        this.appid = appid
+        this.region = region
+        this.maxUploadThreadSize = maxUploadThreadSize
+        this.uploadTimeOutTime = uploadTimeOutTime
+    }
+
+    /**
+     * 设置用户标识配置
+     * @param phone Long
+     * @param pwd String
+     * @param orgId Long
+     * @param type Int
+     * @param ticket Long
+     */
+    fun setUserConfig(phone: Long, pwd: String, orgId: Long, type: Int, ticket: Long) {
+        this.phone = phone
+        this.pwd = pwd
+        this.orgId = orgId
+        this.type = type
+        this.ticket = ticket
+    }
 
     fun init(context: Context) {
         //初始化http请求引擎
-        ScHttpClient.init(ScHttpConfig.create().setBaseUrl(BASE_HTTP))
+        ScHttpClient.init(ScHttpConfig.create().setBaseUrl(baseUrl))
         //HttpUtils.init(ScHttpClient.getOkHttpClient())
         //stetho调试集成
         Stetho.initializeWithDefaults(context)
