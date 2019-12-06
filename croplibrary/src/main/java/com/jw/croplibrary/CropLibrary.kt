@@ -84,8 +84,8 @@ object CropLibrary {
     }
 
     fun init(context: Context, baseCachePath: String) {
-        CACHE_IMG_CROP = "$baseCachePath/插件"
-        CACHE_VIDEO_CROP = "$baseCachePath/插件"
+        CACHE_IMG_CROP = baseCachePath
+        CACHE_VIDEO_CROP = baseCachePath
         CACHE_VIDEO_CROP_COVER = "$baseCachePath/crop/video/cover"
         FFmpeg.getInstance(context).isSupported
         BaseUtils.init(context)
