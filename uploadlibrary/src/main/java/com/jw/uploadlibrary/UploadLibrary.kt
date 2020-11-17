@@ -27,7 +27,8 @@ object UploadLibrary {
     const val TYPE_UPLOAD_VOICE = 2   //语音
     var maxUploadThreadSize = 2
     var uploadTimeOutTime = 60
-    var isEnable = false
+    var isEnable = true
+    var isOrigin = true
 
     /**
      * 设置腾讯云上传配置
@@ -74,5 +75,10 @@ object UploadLibrary {
         //stetho调试集成
         Stetho.initializeWithDefaults(context)
         UploadManager.instance.init(context)
+    }
+
+    var CACHE_IMG_PATH: String? = null   //拍照缓存路径
+    fun init(baseCachePath: String) {
+        CACHE_IMG_PATH = baseCachePath
     }
 }

@@ -10,6 +10,7 @@ import com.jw.croplibrary.CropLibrary
 import com.jw.galarylibrary.GalaryLibrary
 import com.jw.library.utils.RomUtil
 import com.jw.uilibrary.base.application.BaseApplication
+import com.jw.uploadlibrary.UploadLibrary
 import com.jw.voicelibrary.VoiceLibrary
 import nl.bravobit.ffmpeg.FFmpeg
 
@@ -22,6 +23,7 @@ class UploadPluginApplication : BaseApplication() {
         CameraLibrary.init(externalCacheDir.absolutePath)
         CropLibrary.init(this, externalCacheDir.absolutePath)
         VoiceLibrary.init(externalCacheDir.absolutePath)
+        UploadLibrary.init(externalCacheDir.absolutePath)
         initFFmpegBinary(this)
         if (RomUtil.isEmui()) {
             // 刷新相册

@@ -3,17 +3,16 @@ package com.jw.library.utils
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
-import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
-import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore.Images.Media
 import android.text.TextUtils
 import android.util.Base64
+import android.util.Log
 import java.io.*
 
 /**
@@ -32,11 +31,14 @@ object BitmapUtil {
 
         try {
             val exifInterface = ExifInterface(path)
-            val orientation = exifInterface.getAttributeInt("Orientation", 1)
+            val orientation = exifInterface.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
             when (orientation) {
-                3 -> degree = 180
-                6 -> degree = 90
-                8 -> degree = 270
+                ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+                ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+                ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
             }
         } catch (var4: IOException) {
             var4.printStackTrace()
@@ -370,15 +372,31 @@ object BitmapUtil {
         return uri
     }
 
+
+    fun compressImg(filePath: String): ByteArray {
+        val needSize = 1
+        val originSize = FileUtils.getFileOrFilesSize(filePath, 3)
+        Log.v("upload_originSize", originSize.toString())
+        val scale = originSize / needSize
+        var quality = (100 / scale).toInt()
+        if (quality > 100)
+            quality = 100
+        return Bitmap2Bytes(filePath, quality)
+    }
+
     /**
      * 将bitmap转为字节
      * @param bm Bitmap
      * @return ByteArray
      */
-    fun Bitmap2Bytes(bm: Bitmap): ByteArray {
-        val baos = ByteArrayOutputStream()
-        bm.compress(CompressFormat.JPEG, 100, baos)
-        return baos.toByteArray()
+    fun Bitmap2Bytes(filePath: String, quality: Int = 100): ByteArray {
+        val byteArray = qualityCompress(filePath, quality, null)
+        return byteArray
+    }
+
+    fun Bitmap2Bytes(bitmap: Bitmap, quality: Int = 100): ByteArray {
+        val byteArray = qualityCompress(bitmap, quality, null)
+        return byteArray
     }
 
     fun base64Image(filePath: String): String {
@@ -396,5 +414,77 @@ object BitmapUtil {
         }
 
         return imgBase64
+    }
+
+
+    /**
+     * 质量压缩
+     * 设置bitmap options属性，降低图片的质量，像素不会减少
+     * 第一个参数为需要压缩的bitmap图片对象，第二个参数为压缩后图片保存的位置
+     * 设置options 属性0-100，来实现压缩（因为png是无损压缩，所以该属性对png是无效的）
+     *
+     * @param bmp
+     * @param quality   0-100 100为不压缩
+     * @param file
+     */
+    fun qualityCompress(bmp: Bitmap, quality: Int = 100, file: File?): ByteArray {
+        val baos = ByteArrayOutputStream()
+        // 把压缩后的数据存放到baos中
+        bmp.compress(CompressFormat.JPEG, quality, baos)
+        return baos.toByteArray()
+    }
+
+    fun qualityCompress(filePath: String, quality: Int = 100, file: File?): ByteArray {
+        val bitmap = BitmapFactory.decodeFile(filePath)
+        val baos = ByteArrayOutputStream()
+        // 把压缩后的数据存放到baos中
+        bitmap.compress(CompressFormat.JPEG, quality, baos)
+        return baos.toByteArray()
+    }
+
+    /**
+     * 尺寸压缩（通过缩放图片像素来减少图片占用内存大小）
+     *
+     * @param bmp
+     * @param file
+     */
+    fun sizeCompress(bmp: Bitmap, file: File?) {
+        // 尺寸压缩倍数,值越大，图片尺寸越小
+        val ratio = 8
+        // 压缩Bitmap到对应尺寸
+        val result =
+            Bitmap.createBitmap(bmp.width / ratio, bmp.height / ratio, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(result)
+        val rect = Rect(0, 0, bmp.width / ratio, bmp.height / ratio)
+        canvas.drawBitmap(bmp, null, rect, null)
+        val baos = ByteArrayOutputStream()
+        // 把压缩后的数据存放到baos中
+        result.compress(CompressFormat.JPEG, 100, baos)
+        try {
+            val fos = FileOutputStream(file)
+            fos.write(baos.toByteArray())
+            fos.flush()
+            fos.close()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 采样率压缩（设置图片的采样率，降低图片像素）
+     * @param filePath
+     * @param inSampleSize 数值越高，图片像素越低
+     */
+    fun samplingRateCompress(filePath: String, inSampleSize: Int = 1): ByteArray {
+        val options = Options()
+        options.inJustDecodeBounds = false
+        //          options.inJustDecodeBounds = true;//为true的时候不会真正加载图片，而是得到图片的宽高信息。
+        //采样率
+        options.inSampleSize = inSampleSize
+        val bitmap = BitmapFactory.decodeFile(filePath, options)
+        val baos = ByteArrayOutputStream()
+        // 把压缩后的数据存放到baos中
+        bitmap.compress(CompressFormat.JPEG, 100, baos)
+        return baos.toByteArray()
     }
 }
