@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.jw.croplibrary.CropLibrary
@@ -65,11 +64,13 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
         if (Build.VERSION.SDK_INT >= 21) {
             val decorView = window.decorView
             //设置让应用主题内容占据状态栏和导航栏
-            val option =
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             decorView.systemUiVisibility = option
             //设置状态栏和导航栏颜色为透明
-            //window.statusBarColor = Color.TRANSPARENT
+            window.statusBarColor = Color.TRANSPARENT
+            window.navigationBarColor = Color.TRANSPARENT
         }
         mCurrentPosition =
             intent.getIntExtra(EXTRA_SELECTED_ITEM_POSITION, 0)
@@ -105,6 +106,12 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                 }
             }
             top_bar.setPadding(0, ThemeUtils.getStatusBarHeight(this@BasePreviewActivity), 0, 0)
+            bottom_bar.setPadding(
+                0,
+                0,
+                0,
+                ThemeUtils.getNavigationBarHeight(this@BasePreviewActivity) / 2
+            )
             bottom_bar.setBackgroundColor(Color.parseColor(ColorCofig.toolbarBgColor))
             topBar.tvDes.setTextColor(Color.parseColor(ColorCofig.naviTitleColor))
             bottomBar.tv_preview_edit.setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorNormal))
@@ -143,7 +150,14 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                         AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_out)
                     top_bar.visibility = View.GONE
                     bottomBar.visibility = View.GONE
-                    window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                    val decorView = window.decorView
+                    //设置让应用主题内容占据状态栏和导航栏
+                    val option = View.SYSTEM_UI_FLAG_FULLSCREEN or
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    decorView.systemUiVisibility = option
                 }
             }
             View.GONE -> {
@@ -154,7 +168,13 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                         AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_in)
                     top_bar.visibility = View.VISIBLE
                     bottomBar.visibility = View.VISIBLE
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                    val decorView = window.decorView
+                    //设置让应用主题内容占据状态栏和导航栏
+                    val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    decorView.systemUiVisibility = option
                 }
             }
         }
