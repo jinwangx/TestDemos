@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
 import com.jw.library.utils.BitmapUtil
+import com.jw.library.utils.FileUtils
 import com.jw.uploadlibrary.UploadLibrary
 import com.jw.uploadlibrary.UploadLibrary.appid
 import com.jw.uploadlibrary.UploadLibrary.region
@@ -35,6 +36,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -121,19 +123,53 @@ class UploadManager {
             //图片
             if (item is ImageItem) {
                 Log.v("upload_orientation", item.orientation.toString())
-                if (UploadLibrary.isOrigin) {   //原图
+                //原图
+                if (UploadLibrary.isOrigin) {
+                    //有方向
+                    if (item.orientation != 0) {
+                        val bitmap = BitmapUtil.rotateBitmapByDegree(item.path!!, item.orientation)
+                        cosxmlUploadTask = transferManager.upload(
+                            authorizationInfo.bucket,
+                            authorizationInfo.keys[index],
+                            BitmapUtil.Bitmap2Bytes(bitmap)
+                        )
+                    }
+                    //没方向
+                    else {
                         cosxmlUploadTask = transferManager.upload(
                             authorizationInfo.bucket,
                             authorizationInfo.keys[index],
                             item.path,
                             null
                         )
-                } else {  //压缩
+                    }
+                }
+                //压缩
+                else {
+                    //有方向
+                    if (item.orientation != 0) {
+                        val bitmap = BitmapUtil.rotateBitmapByDegree(item.path!!, item.orientation)
+                        val pictureFileName = "picture_" + System.currentTimeMillis() + ".jpg"
+                        FileUtils.saveBitmap(
+                            UploadLibrary.CACHE_IMG_PATH!!,
+                            pictureFileName,
+                            bitmap
+                        )
+                        val path = UploadLibrary.CACHE_IMG_PATH + File.separator + pictureFileName
+                        cosxmlUploadTask = transferManager.upload(
+                            authorizationInfo.bucket,
+                            authorizationInfo.keys[index],
+                            BitmapUtil.compressImg(path)
+                        )
+                    }
+                    //没方向
+                    else {
                         cosxmlUploadTask = transferManager.upload(
                             authorizationInfo.bucket,
                             authorizationInfo.keys[index],
                             BitmapUtil.compressImg(item.path!!)
                         )
+                    }
                 }
             }
             //语音
