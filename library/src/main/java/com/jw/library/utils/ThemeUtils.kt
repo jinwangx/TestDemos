@@ -116,9 +116,13 @@ object ThemeUtils {
     }
 
     fun getNavigationBarHeight(context: Context): Int {
-        val resourceId =
-            context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        return if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+        var navigationBarHeight = -1
+        val resources = context.resources
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            navigationBarHeight = resources.getDimensionPixelSize(resourceId)
+        }
+        return navigationBarHeight
     }
 
     /**
