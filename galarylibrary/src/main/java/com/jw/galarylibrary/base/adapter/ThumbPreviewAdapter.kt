@@ -130,10 +130,10 @@ class ThumbPreviewAdapter<ITEM>(
         override fun bind(position: Int) {
             super.bind(position)
             val item = mItems.get(position) as VideoItem
-            GlideImageLoader.displayImage(
+            GlideImageLoader.displayVideoThumbnailImage(
                 mContext,
                 item.thumbPath!!,
-                this.mItemView
+                this.mItemView, item
             )
         }
     }

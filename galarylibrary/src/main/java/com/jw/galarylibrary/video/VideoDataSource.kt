@@ -1,6 +1,8 @@
 package com.jw.galarylibrary.video
 
 import android.database.Cursor
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.FragmentActivity
@@ -14,6 +16,7 @@ import com.jw.library.model.VideoItem
 import com.jw.library.utils.FileUtils
 import java.io.File
 import java.util.*
+
 
 class VideoDataSource internal constructor(
     private val activity: FragmentActivity,
@@ -86,29 +89,36 @@ class VideoDataSource internal constructor(
                 val mineType = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[5]))
                 /*                if(duration>MAX_LENGTH)
                     continue;*/
-                //提前生成缩略图，再获取：http://stackoverflow.com/questions/27903264/how-to-get-the-video-thumbnail-path-and-+not-the-bitmap
-                MediaStore.Video.Thumbnails.getThumbnail(
-                    activity.contentResolver,
-                    videoId,
-                    MediaStore.Video.Thumbnails.MICRO_KIND,
-                    null
-                )
-                val projection =
-                    arrayOf(MediaStore.Video.Thumbnails._ID, MediaStore.Video.Thumbnails.DATA)
 
-                val cursor = activity.contentResolver.query(
-                    MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
-                    projection,
-                    MediaStore.Video.Thumbnails.VIDEO_ID + "=?",
-                    arrayOf(videoId.toString() + ""),
-                    null
-                )
                 var thumbPath = ""
-                while (cursor!!.moveToNext()) {
-                    thumbPath =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA))
+                var uri: Uri? = null
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    //提前生成缩略图，再获取：http://stackoverflow.com/questions/27903264/how-to-get-the-video-thumbnail-path-and-+not-the-bitmap
+                    MediaStore.Video.Thumbnails.getThumbnail(
+                        activity.contentResolver,
+                        videoId,
+                        MediaStore.Video.Thumbnails.MICRO_KIND,
+                        null
+                    )
+                    val projection =
+                        arrayOf(MediaStore.Video.Thumbnails._ID, MediaStore.Video.Thumbnails.DATA)
+
+                    val cursor = activity.contentResolver.query(
+                        MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
+                        projection,
+                        MediaStore.Video.Thumbnails.VIDEO_ID + "=?",
+                        arrayOf(videoId.toString() + ""),
+                        null
+                    )
+                    while (cursor!!.moveToNext()) {
+                        thumbPath =
+                            cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA))
+                    }
+                    cursor.close()
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val baseUri = Uri.parse("content://media/external/video/media")
+                    uri = Uri.withAppendedPath(baseUri, "" + videoId)
                 }
-                cursor.close()
                 val file = File(videoPath)
                 if (file.exists() && file.length() > 0L) {
 
@@ -118,6 +128,7 @@ class VideoDataSource internal constructor(
                     videoItem.size = FileUtils.getAutoFileOrFilesSize(videoPath)
                     videoItem.duration = duration
                     videoItem.thumbPath = thumbPath
+                    videoItem.uri = uri
                     videoItem.mimeType = mineType
                     allVideos.add(videoItem)
                     val videoFile = File(videoPath)

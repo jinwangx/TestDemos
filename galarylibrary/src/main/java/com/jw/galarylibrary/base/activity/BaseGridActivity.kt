@@ -21,6 +21,7 @@ import com.jw.galarylibrary.databinding.ActivityGridBinding
 import com.jw.galarylibrary.img.ImagePicker
 import com.jw.galarylibrary.img.view.FolderPopUpWindow
 import com.jw.galarylibrary.img.view.GridSpacingItemDecoration
+import com.jw.library.ColorCofig
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
 import com.jw.library.model.VideoItem
@@ -67,12 +68,12 @@ abstract class BaseGridActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
             cbOrigin.apply {
                 setOnCheckedChangeListener(this@BaseGridActivity)
                 isChecked = mPicker.isOrigin
-                setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorNormal))
+                setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorNormal))
             }
-            topBar.tvDes.setTextColor(Color.parseColor(com.jw.library.ColorCofig.naviTitleColor))
-            footerBar.setBackgroundColor(Color.parseColor(com.jw.library.ColorCofig.toolbarBgColor))
-            footerBar.cb_origin.setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorDisabled))
-            footerBar.tv_dir.setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorNormal))
+            topBar.tvDes.setTextColor(Color.parseColor(ColorCofig.naviTitleColor))
+            footerBar.setBackgroundColor(Color.parseColor(ColorCofig.toolbarBgColor))
+            footerBar.cb_origin.setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorDisabled))
+            footerBar.tv_dir.setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorNormal))
             if (mPicker.isMultiMode) {
                 topBar.btnOk.visibility = View.VISIBLE
                 btnPreview.visibility = View.VISIBLE
@@ -174,12 +175,12 @@ abstract class BaseGridActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                         mPicker.selectItemCount,
                         mPicker.selectLimit
                     )
-                    setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorNormal))
+                    setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorNormal))
                 }
                 btnPreview.apply {
                     isEnabled = true
                     text = getString(R.string.ip_preview_count, mPicker.selectItemCount)
-                    setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorNormal))
+                    setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorNormal))
                 }
 
             }
@@ -189,12 +190,12 @@ abstract class BaseGridActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                 topBar.btnOk.apply {
                     isEnabled = false
                     text = getString(R.string.ip_complete)
-                    setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorDisabled))
+                    setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorDisabled))
                 }
                 btnPreview.apply {
                     isEnabled = false
                     text = getString(R.string.ip_preview)
-                    setTextColor(Color.parseColor(com.jw.library.ColorCofig.toolbarTitleColorDisabled))
+                    setTextColor(Color.parseColor(ColorCofig.toolbarTitleColorDisabled))
                 }
             }
         }

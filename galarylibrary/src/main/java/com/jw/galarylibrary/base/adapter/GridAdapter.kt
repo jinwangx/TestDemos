@@ -220,10 +220,11 @@ class GridAdapter<ITEM : BaseItem>(
             super.bind(position)
             val videoItem = getItem(position) as VideoItem
             tvDuration.text = DateUtils.getDuration(videoItem.duration, "mm:ss")
-            GlideImageLoader.displayImage(
+            GlideImageLoader.displayVideoThumbnailImage(
                 mActivity,
                 videoItem.thumbPath!!,
-                ivThumb
+                ivThumb,
+                videoItem
             )
         }
     }

@@ -98,6 +98,13 @@
             android:layout_height="40dp"
             android:onClick="@{clickListener}"
             android:text="从本地相册选择视频" />
+
+        <Button
+            android:id="@+id/btn_prevent"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:onClick="@{clickListener}"
+            android:text="图片详情" />
     </LinearLayout>
 
 </layout>

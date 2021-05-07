@@ -3,11 +3,13 @@ package com.jw.uploadlibrary.upload
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
 import com.jw.library.utils.BitmapUtil
 import com.jw.library.utils.FileUtils
+import com.jw.library.utils.ThemeUtils
 import com.jw.uploadlibrary.UploadLibrary
 import com.jw.uploadlibrary.UploadLibrary.appid
 import com.jw.uploadlibrary.UploadLibrary.region
@@ -77,14 +79,17 @@ class UploadManager {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ jsonObject ->
-
+                if (!jsonObject.isNull("error"))
+                    ThemeUtils.show(context, jsonObject.getString("message"))
                 val authorizationInfo =
                     Gson().fromJson(jsonObject.toString(), AuthorizationInfo::class.java)
                 for (i in 0 until items.size) {
                     //执行单个文件上传
                     excUploadImgOrVoice(i, items[i], authorizationInfo)
                 }
-            }, { })
+            }, {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show();
+            })
     }
 
     /**
@@ -123,8 +128,10 @@ class UploadManager {
             //图片
             if (item is ImageItem) {
                 Log.v("upload_orientation", item.orientation.toString())
-                //原图
-                if (UploadLibrary.isOrigin) {
+                val originSize = FileUtils.getFileOrFilesSize(item.path!!, 3)
+                val isNeedCompress = originSize > 1
+                //原图或者小于等于1M时，不压缩
+                if (UploadLibrary.isOrigin || !isNeedCompress) {
                     //有方向
                     if (item.orientation != 0) {
                         val bitmap = BitmapUtil.rotateBitmapByDegree(item.path!!, item.orientation)

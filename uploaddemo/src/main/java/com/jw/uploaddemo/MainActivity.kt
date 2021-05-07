@@ -16,8 +16,10 @@ import com.jw.croplibrary.CropLibrary
 import com.jw.galarylibrary.base.activity.BaseGridActivity
 import com.jw.galarylibrary.img.ImagePicker
 import com.jw.galarylibrary.img.ui.ImageGridActivity
+import com.jw.galarylibrary.img.ui.ImagePreviewActivity2
 import com.jw.galarylibrary.video.ui.VideoGridActivity
 import com.jw.library.model.BaseItem
+import com.jw.library.model.ImageItem
 import com.jw.library.model.VoiceItem
 import com.jw.library.ui.BaseBindingActivity
 import com.jw.library.utils.BitmapUtil
@@ -103,6 +105,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
                     R.id.btn_sel_video -> {
                         getVideos()
                     }
+                    R.id.btn_prevent -> {
+                        goPrevent();
+                    }
                 }
             }
         }
@@ -114,13 +119,13 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     @SuppressLint("CheckResult")
     private fun login() {
         UploadLibrary.setCosUploadConfig(
-            "",
-            "",
-            ""
+            "http://api.121wty.com/jserver/",
+            "1252766259",
+            "ap-guangzhou"
         )
         UploadLibrary.setUserConfig(
-            0,
-            "",
+            13407191215,
+            "6234ef5192de321f27b0d7b18ba02f8166af27df",
             1,
             2,
             0
@@ -164,6 +169,19 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     private fun getVideos() {
         VideoGridActivity.start(this)
+    }
+
+    private fun goPrevent() {
+        val items = java.util.ArrayList<ImageItem>()
+        for (i in 1..10) {
+            val imageItem = ImageItem()
+            imageItem.name = "图片$i"
+            imageItem.path =
+                "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2F4c%2Fa6%2F31%2F4ca631a8841304be2351295d50cf801d.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1622864281&t=7d254b18ad2dcaeae5718852b405075c"
+            items.add(imageItem)
+        }
+
+        ImagePreviewActivity2.start(this, 0, items)
     }
 
     private fun shot() {
@@ -336,6 +354,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
                 "name：" + item.name + "  mimeType：" + item.mimeType + "  size：" + item.size + "  path：" + item.path
             )
         }
+        UploadLibrary.isOrigin = !(type == UploadLibrary.TYPE_UPLOAD_IMG && !ImagePicker.isOrigin)
         if (UploadLibrary.isEnable)
             ProgressActivity.start(this, type, items)
     }

@@ -1,5 +1,6 @@
 package com.jw.library.model
 
+import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -11,6 +12,7 @@ import android.os.Parcelable
 class VideoItem : BaseItem {
     var thumbPath: String? = null
     var duration: Long = 0
+    var uri: Uri? = null
 
     constructor()
 
@@ -32,6 +34,7 @@ class VideoItem : BaseItem {
         super.writeToParcel(parcel, flags)
         parcel.writeLong(duration)
         parcel.writeString(thumbPath)
+        //parcel.writeString(uri.toString())
     }
 
     companion object CREATOR : Parcelable.Creator<VideoItem> {

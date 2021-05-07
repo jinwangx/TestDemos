@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_pre_img_count">#ffffff</color>
+    <color name="bg_layout">#000000</color>
+    <color name="color_toolbar_title">#ffffff</color>
+    <color name="bg_pre_img_count">#868686</color>
+</resources>

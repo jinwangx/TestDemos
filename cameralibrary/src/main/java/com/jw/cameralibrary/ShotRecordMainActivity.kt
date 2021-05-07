@@ -77,7 +77,7 @@ class ShotRecordMainActivity : BaseBindingActivity<ActivityCameraBinding>() {
                 val coverPath = FileUtils.saveBitmap(CACHE_VIDEO_PATH_COVER!!, coverName, cover)
                 val videoItem = VideoItem(videoPath, coverPath, duration)
                 val uri = VideoUtil.saveToGalary(this@ShotRecordMainActivity, videoPath, duration)
-                CameraLibrary.galleryAddPic(this@ShotRecordMainActivity, uri.path!!)
+                //CameraLibrary.galleryAddPic(this@ShotRecordMainActivity, uri.path!!)
                 backRecord(videoItem)
             }
 

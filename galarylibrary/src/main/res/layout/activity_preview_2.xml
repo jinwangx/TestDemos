@@ -1,0 +1,69 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="curItem"
+            type="com.jw.library.model.ImageItem" />
+
+        <variable
+            name="numTxt"
+            type="String" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_layout">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tb_pre"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:title="@{curItem.name}"
+                app:titleTextColor="@color/color_toolbar_title">
+
+            </android.support.v7.widget.Toolbar>
+
+            <RelativeLayout
+                android:id="@+id/bottom_bar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:text="@{numTxt}"
+                    android:background="@drawable/bg_iv_pos"
+                    android:textColor="@color/color_pre_img_count"
+                    android:textSize="18dp" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+    </FrameLayout>
+</layout>
