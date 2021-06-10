@@ -28,7 +28,6 @@ class VideoPageAdapter(activity: Activity, videos: ArrayList<VideoItem>) :
 
         GlideImageLoader.displayVideoThumbnailImage(
             mActivity,
-            videoItem.thumbPath!!,
             iv,
             videoItem,
             Size(ThemeUtils.getWindowWidth(mActivity), ThemeUtils.getWindowHeight(mActivity))

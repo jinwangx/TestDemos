@@ -16,7 +16,7 @@ open class BaseItem() : Parcelable {
     var name: String? = null
     var path: String? = null
     var mimeType: String? = null
-    var size: String? = null
+    var size: Long? = 0
 
     /**
      * 根据路径自动补充文件名、文件mineType、文件大小
@@ -26,7 +26,7 @@ open class BaseItem() : Parcelable {
     constructor(path: String) : this() {
         this.path = path
         this.name = path.split("/").last()
-        this.size = FileUtils.getAutoFileOrFilesSize(path)
+        this.size = 0
         this.mimeType = FileUtils.getMIMEType(File(path))
     }
 
@@ -34,14 +34,14 @@ open class BaseItem() : Parcelable {
         name = parcel.readString()
         path = parcel.readString()
         mimeType = parcel.readString()
-        size = parcel.readString()
+        size = parcel.readLong()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(path)
         parcel.writeString(mimeType)
-        parcel.writeString(size)
+        parcel.writeLong(size!!)
     }
 
     override fun describeContents(): Int {

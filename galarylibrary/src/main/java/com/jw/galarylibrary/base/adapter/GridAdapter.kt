@@ -222,7 +222,6 @@ class GridAdapter<ITEM : BaseItem>(
             tvDuration.text = DateUtils.getDuration(videoItem.duration, "mm:ss")
             GlideImageLoader.displayVideoThumbnailImage(
                 mActivity,
-                videoItem.thumbPath!!,
                 ivThumb,
                 videoItem
             )

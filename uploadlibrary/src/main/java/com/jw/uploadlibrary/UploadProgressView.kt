@@ -48,10 +48,10 @@ class UploadProgressView @JvmOverloads constructor(
             UploadLibrary.TYPE_UPLOAD_VIDEO -> {
                 originTitle = "视频文件上传中"
                 val videoItem = item as VideoItem
-                GlideImageLoader.displayImage(
+                GlideImageLoader.displayVideoThumbnailImage(
                     context,
-                    videoItem.thumbPath!!,
-                    binding.iv
+                    binding.iv,
+                    videoItem
                 )
             }
             UploadLibrary.TYPE_UPLOAD_IMG -> {

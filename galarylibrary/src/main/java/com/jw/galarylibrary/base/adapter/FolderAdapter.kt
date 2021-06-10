@@ -93,7 +93,6 @@ class FolderAdapter<Data>(private val mActivity: Activity, mFolders: MutableList
                 mActivity.getString(R.string.ip_folder_video_count, folder.items!!.size)
             GlideImageLoader.displayVideoThumbnailImage(
                 mActivity,
-                path!!,
                 holder.cover,
                 folder.cover as VideoItem
             )

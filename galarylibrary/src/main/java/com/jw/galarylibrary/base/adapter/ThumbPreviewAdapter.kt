@@ -132,7 +132,6 @@ class ThumbPreviewAdapter<ITEM>(
             val item = mItems.get(position) as VideoItem
             GlideImageLoader.displayVideoThumbnailImage(
                 mContext,
-                item.thumbPath!!,
                 this.mItemView, item
             )
         }

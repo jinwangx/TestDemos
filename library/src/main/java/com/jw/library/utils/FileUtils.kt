@@ -270,9 +270,9 @@ object FileUtils {
         val flist = f.listFiles()
         for (i in flist.indices) {
             if (flist[i].isDirectory) {
-                size = size + getFileSizes(flist[i])
+                size += getFileSizes(flist[i])
             } else {
-                size = size + getFileSize(flist[i])
+                size += getFileSize(flist[i])
             }
         }
         return size
@@ -310,7 +310,7 @@ object FileUtils {
      * @param sizeType
      * @return
      */
-    private fun FormetFileSize(fileS: Long, sizeType: Int): Double {
+    fun FormetFileSize(fileS: Long, sizeType: Int): Double {
         val df = DecimalFormat("#.00")
         var fileSizeLong = 0.0
         when (sizeType) {
@@ -456,7 +456,7 @@ object FileUtils {
 
     fun <ITEM : BaseItem> getMediaItem(item: ITEM): ITEM {
         item.name = item.path!!.split("/").last()
-        item.size = getAutoFileOrFilesSize(item.path!!)
+        item.size = getFileSizes(File(item.path))
         item.mimeType = getMIMEType(File(item.path))
         return item
     }

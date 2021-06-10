@@ -4,14 +4,16 @@ import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore.Images.Media
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.LoaderManager
 import android.support.v4.app.LoaderManager.LoaderCallbacks
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
+import android.util.Log
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.adapter.GridAdapter
 import com.jw.galarylibrary.base.bean.Folder
 import com.jw.library.model.ImageItem
-import com.jw.library.utils.FileUtils
+import com.sencent.thirdpart.rxjava.RxjavaUtils
 import java.io.File
 import java.util.*
 
@@ -35,13 +37,12 @@ class ImageDataSource(
     private var cursorLoader: CursorLoader? = null
 
     init {
-        val loaderManager = activity.supportLoaderManager
         if (path == null) {
-            loaderManager.initLoader(0, null, this)
+            LoaderManager.getInstance(activity).initLoader(0, null, this)
         } else {
             val bundle = Bundle()
             bundle.putString("path", path)
-            loaderManager.initLoader(1, bundle, this)
+            LoaderManager.getInstance(activity).initLoader(1, bundle, this)
         }
 
     }
@@ -51,7 +52,7 @@ class ImageDataSource(
             cursorLoader = CursorLoader(
                 this.activity,
                 Media.EXTERNAL_CONTENT_URI,
-                this.IMAGE_PROJECTION,
+                null,
                 null,
                 null,
                 this.IMAGE_PROJECTION[6] + " DESC"
@@ -75,15 +76,17 @@ class ImageDataSource(
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
         if (this.imageFolders.size != 0)
             return
-        this.imageFolders.clear()
-        if (data != null) {
-            val allImages = ArrayList<ImageItem>()
 
-            while (data.moveToNext()) {
-                val imageName = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[0]))
-                val imagePath = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[1]))
-                val file = File(imagePath)
-                if (file.exists() && file.length() > 0L) {
+        RxjavaUtils.workWithUiThread({
+            this.imageFolders.clear()
+            if (data != null) {
+                val allImages = ArrayList<ImageItem>()
+
+                while (data.moveToNext()) {
+                    val imageName =
+                        data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[0]))
+                    val imagePath =
+                        data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[1]))
                     val imageSize =
                         data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[2]))
                     val imageWidth =
@@ -96,10 +99,15 @@ class ImageDataSource(
                         data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[6]))
                     val orientation =
                         data.getInt(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[7]))
+                    Log.v(
+                        "imageInfo",
+                        "size：$imageSize  width：$imageWidth   height：$imageHeight   imageAddTime：$imageAddTime  orientation：$orientation"
+                    )
+
                     val imageItem = ImageItem()
                     imageItem.name = imageName
                     imageItem.path = imagePath
-                    imageItem.size = FileUtils.getAutoFileOrFilesSize(imagePath)
+                    imageItem.size = imageSize
                     imageItem.width = imageWidth
                     imageItem.height = imageHeight
                     imageItem.mimeType = imageMimeType
@@ -112,31 +120,32 @@ class ImageDataSource(
                     imageFolder.name = imageParentFile.name
                     imageFolder.path = imageParentFile.absolutePath
                     if (!this.imageFolders.contains(imageFolder)) {
-                        val images = ArrayList<ImageItem>()
+                        var images = ArrayList<ImageItem>()
                         images.add(imageItem)
                         imageFolder.cover = imageItem
                         imageFolder.items = images
                         this.imageFolders.add(imageFolder)
                     } else {
-                        (this.imageFolders[this.imageFolders.indexOf(imageFolder)] as Folder<ImageItem>).items!!.add(
+                        this.imageFolders[this.imageFolders.indexOf(imageFolder)].items!!.add(
                             imageItem
                         )
                     }
                 }
+
+                if (data.count > 0 && allImages.size > 0) {
+                    val allImagesFolder = Folder<ImageItem>()
+                    allImagesFolder.name = this.activity.resources.getString(R.string.ip_all_images)
+                    allImagesFolder.path = "/"
+                    allImagesFolder.cover = allImages[0]
+                    allImagesFolder.items = allImages
+                    this.imageFolders.add(0, allImagesFolder)
+                }
             }
 
-            if (data.count > 0 && allImages.size > 0) {
-                val allImagesFolder = Folder<ImageItem>()
-                allImagesFolder.name = this.activity.resources.getString(R.string.ip_all_images)
-                allImagesFolder.path = "/"
-                allImagesFolder.cover = allImages.get(0)
-                allImagesFolder.items = allImages
-                this.imageFolders.add(0, allImagesFolder)
-            }
-        }
-
-        ImagePicker.itemFolders = this.imageFolders
-        this.loadedListener.onItemsLoaded(this.imageFolders)
+            ImagePicker.itemFolders = this.imageFolders
+        }, {
+            this.loadedListener.onItemsLoaded(this.imageFolders)
+        })
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {

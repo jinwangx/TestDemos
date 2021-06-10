@@ -128,7 +128,8 @@ class UploadManager {
             //图片
             if (item is ImageItem) {
                 Log.v("upload_orientation", item.orientation.toString())
-                val originSize = FileUtils.getFileOrFilesSize(item.path!!, 3)
+                val originSize = FileUtils.FormetFileSize(item.size!!, 3)
+                Log.v("sizeeeee", originSize.toString())
                 val isNeedCompress = originSize > 1
                 //原图或者小于等于1M时，不压缩
                 if (UploadLibrary.isOrigin || !isNeedCompress) {

@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.LoaderManager
 import android.support.v4.app.LoaderManager.LoaderCallbacks
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
@@ -13,7 +14,6 @@ import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.adapter.GridAdapter
 import com.jw.galarylibrary.base.bean.Folder
 import com.jw.library.model.VideoItem
-import com.jw.library.utils.FileUtils
 import java.io.File
 import java.util.*
 
@@ -35,7 +35,7 @@ class VideoDataSource internal constructor(
     private val videoFolders = ArrayList<Folder<VideoItem>>()
 
     init {
-        val loaderManager = activity.supportLoaderManager
+        val loaderManager = LoaderManager.getInstance(activity)
         if (path == null) {
             loaderManager.initLoader(0, null, this)
         } else {
@@ -83,39 +83,14 @@ class VideoDataSource internal constructor(
             while (data.moveToNext()) {
                 val videoName = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[0]))
                 val videoPath = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[1]))
-                val imageSize = data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[2]))
+                val videoSize = data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[2]))
                 val videoId = data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[3]))
                 val duration = data.getLong(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[4]))
                 val mineType = data.getString(data.getColumnIndexOrThrow(this.IMAGE_PROJECTION[5]))
                 /*                if(duration>MAX_LENGTH)
                     continue;*/
-
-                var thumbPath = ""
                 var uri: Uri? = null
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                    //提前生成缩略图，再获取：http://stackoverflow.com/questions/27903264/how-to-get-the-video-thumbnail-path-and-+not-the-bitmap
-                    MediaStore.Video.Thumbnails.getThumbnail(
-                        activity.contentResolver,
-                        videoId,
-                        MediaStore.Video.Thumbnails.MICRO_KIND,
-                        null
-                    )
-                    val projection =
-                        arrayOf(MediaStore.Video.Thumbnails._ID, MediaStore.Video.Thumbnails.DATA)
-
-                    val cursor = activity.contentResolver.query(
-                        MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
-                        projection,
-                        MediaStore.Video.Thumbnails.VIDEO_ID + "=?",
-                        arrayOf(videoId.toString() + ""),
-                        null
-                    )
-                    while (cursor!!.moveToNext()) {
-                        thumbPath =
-                            cursor.getString(cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA))
-                    }
-                    cursor.close()
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val baseUri = Uri.parse("content://media/external/video/media")
                     uri = Uri.withAppendedPath(baseUri, "" + videoId)
                 }
@@ -125,9 +100,8 @@ class VideoDataSource internal constructor(
                     val videoItem = VideoItem()
                     videoItem.name = videoName
                     videoItem.path = videoPath
-                    videoItem.size = FileUtils.getAutoFileOrFilesSize(videoPath)
+                    videoItem.size = videoSize
                     videoItem.duration = duration
-                    videoItem.thumbPath = thumbPath
                     videoItem.uri = uri
                     videoItem.mimeType = mineType
                     allVideos.add(videoItem)
@@ -143,7 +117,7 @@ class VideoDataSource internal constructor(
                         videoFolder.items = videos
                         this.videoFolders.add(videoFolder)
                     } else {
-                        (this.videoFolders.get(this.videoFolders.indexOf(videoFolder)) as Folder<VideoItem>).items!!.add(
+                        this.videoFolders.get(this.videoFolders.indexOf(videoFolder)).items!!.add(
                             videoItem
                         )
                     }
