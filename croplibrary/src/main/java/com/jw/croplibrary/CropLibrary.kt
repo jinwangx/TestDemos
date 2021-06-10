@@ -6,7 +6,6 @@ import com.jw.croplibrary.img.AspectRatio
 import com.jw.croplibrary.img.CropImageView.Style
 import com.jw.library.utils.BitmapUtil
 import iknow.android.utils.BaseUtils
-import nl.bravobit.ffmpeg.FFmpeg
 
 /**
  * 创建时间：2019/5/2318:07
@@ -85,9 +84,6 @@ object CropLibrary {
 
     fun init(context: Context, baseCachePath: String) {
         CACHE_IMG_CROP = baseCachePath
-        CACHE_VIDEO_CROP = baseCachePath
-        CACHE_VIDEO_CROP_COVER = "$baseCachePath/crop/video/cover"
-        FFmpeg.getInstance(context).isSupported
         BaseUtils.init(context)
     }
 }

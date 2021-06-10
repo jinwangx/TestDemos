@@ -32,7 +32,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     def dependencies = rootProject.ext.compileDependencies
     implementation dependencies.photoView
-    api 'nl.bravobit:android-ffmpeg:1.1.5'
+    //api 'nl.bravobit:android-ffmpeg:1.1.5'
     api 'com.github.iknow4:android-utils-sdk:1.1.2'
     implementation project(path: ':library')
 }

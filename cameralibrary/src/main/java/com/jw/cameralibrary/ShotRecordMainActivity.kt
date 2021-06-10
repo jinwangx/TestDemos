@@ -17,7 +17,6 @@ import com.jw.cameralibrary.listener.ClickListener
 import com.jw.cameralibrary.listener.JCameraListener
 import com.jw.croplibrary.CropLibrary
 import com.jw.croplibrary.img.CropActivity
-import com.jw.croplibrary.video.VideoTrimmerActivity
 import com.jw.library.model.ImageItem
 import com.jw.library.model.VideoItem
 import com.jw.library.ui.BaseBindingActivity
@@ -82,9 +81,6 @@ class ShotRecordMainActivity : BaseBindingActivity<ActivityCameraBinding>() {
             }
 
             override fun recordEdit(videoPath: String, cover: Bitmap, duration: Long) {
-                val coverName = "cover_" + System.currentTimeMillis() + ".png"
-                cropType = 2
-                VideoTrimmerActivity.start(this@ShotRecordMainActivity, videoPath, coverName)
             }
         })
 
@@ -112,15 +108,6 @@ class ShotRecordMainActivity : BaseBindingActivity<ActivityCameraBinding>() {
                         FileUtils.saveBitmap(CACHE_IMG_PATH!!, pictureFileName!!, cropBitmap)
                     val imageItem = ImageItem(picturePath!!)
                     backCapture(imageItem)
-                }
-                VideoTrimmerActivity.REQUEST_CODE_ITEM_CROP -> {
-                    val resultUri =
-                        data!!.getParcelableExtra(CropLibrary.EXTRA_CROP_ITEM_OUT_URI) as Uri
-                    val path = resultUri.path
-                    val thumbPath = data.getStringExtra("thumbPath")
-                    val duration = data.getLongExtra("duration", 0)
-                    val item = VideoItem(path!!, thumbPath, duration)
-                    backRecord(item)
                 }
             }
         }

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.view.View
-import com.jw.croplibrary.video.VideoTrimmerActivity
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.activity.BaseGridActivity
 import com.jw.galarylibrary.video.VideoDataSource
@@ -29,11 +28,6 @@ class VideoGridActivity : BaseGridActivity<VideoItem>(VideoPicker) {
     }
 
     override fun onEdit(item: VideoItem) {
-        VideoTrimmerActivity.start(
-            this,
-            item.path!!,
-            item.name!!
-        )
     }
 
     override fun onPreview(position: Int?) {

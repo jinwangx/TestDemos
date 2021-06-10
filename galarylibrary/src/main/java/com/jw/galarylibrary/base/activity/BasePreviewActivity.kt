@@ -13,7 +13,6 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.jw.croplibrary.CropLibrary
 import com.jw.croplibrary.img.CropActivity
-import com.jw.croplibrary.video.VideoTrimmerActivity
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.BasePicker
 import com.jw.galarylibrary.base.I.IPreview
@@ -25,7 +24,6 @@ import com.jw.galarylibrary.img.adapter.ImagePageAdapter
 import com.jw.library.ColorCofig
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
-import com.jw.library.model.VideoItem
 import com.jw.library.ui.BaseBindingActivity
 import com.jw.library.utils.ThemeUtils
 import kotlinx.android.synthetic.main.activity_preview.*
@@ -286,40 +284,6 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
 
 
                 }
-                VideoTrimmerActivity.REQUEST_CODE_ITEM_CROP -> {
-                    val resultUri =
-                        data!!.getParcelableExtra<Uri>(CropLibrary.EXTRA_CROP_ITEM_OUT_URI)
-                    if (resultUri != null) {
-                        var fromSelectedPosition = -1
-                        for (i in 0 until mPicker.selectedItems.size) {
-                            if (mPicker.selectedItems[i].path == mItems[mCurrentPosition].path) {
-                                fromSelectedPosition = i
-                                break
-                            }
-                        }
-                        val path = resultUri.path
-                        val thumbPath = data.getStringExtra("thumbPath")
-                        val duration = data.getLongExtra("duration", 0)
-                        val item = VideoItem(path!!, thumbPath, duration)
-                        if (fromSelectedPosition != -1) {
-                            mPicker.addSelectedItem(
-                                fromSelectedPosition,
-                                mPicker.selectedItems[fromSelectedPosition],
-                                false
-                            )
-                            mPicker.addSelectedItem(fromSelectedPosition, item as ITEM, true)
-                        }
-
-                        if (isFromItems) {
-                            mItems.removeAt(mCurrentPosition)
-                        }
-
-                        mItems.add(mCurrentPosition, item as ITEM)
-                        mRvAdapter.notifyDataSetChanged()
-                    }
-
-                }
-
             }
         }
     }

@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.CompoundButton
 import com.jw.croplibrary.CropLibrary
 import com.jw.croplibrary.img.CropActivity
-import com.jw.croplibrary.video.VideoTrimmerActivity
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.BasePicker
 import com.jw.galarylibrary.base.I.IGrid
@@ -24,7 +23,6 @@ import com.jw.galarylibrary.img.view.GridSpacingItemDecoration
 import com.jw.library.ColorCofig
 import com.jw.library.model.BaseItem
 import com.jw.library.model.ImageItem
-import com.jw.library.model.VideoItem
 import com.jw.library.ui.BaseBindingActivity
 import com.jw.library.utils.ThemeUtils
 import kotlinx.android.synthetic.main.activity_grid.view.*
@@ -219,17 +217,6 @@ abstract class BaseGridActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
                     val resultUri =
                         data!!.getParcelableExtra<Uri>(CropLibrary.EXTRA_CROP_ITEM_OUT_URI)
                     val item = ImageItem(resultUri.path!!)
-                    mPicker.clearSelectedItems()
-                    mPicker.addSelectedItem(0, item as ITEM, true)
-                    onBack()
-                }
-                VideoTrimmerActivity.REQUEST_CODE_ITEM_CROP -> {
-                    val resultUri =
-                        data!!.getParcelableExtra<Uri>(CropLibrary.EXTRA_CROP_ITEM_OUT_URI)
-                    val path = resultUri.path
-                    val thumbPath = data.getStringExtra("thumbPath")
-                    val duration = data.getLongExtra("duration", 0)
-                    val item = VideoItem(path!!, thumbPath, duration)
                     mPicker.clearSelectedItems()
                     mPicker.addSelectedItem(0, item as ITEM, true)
                     onBack()
