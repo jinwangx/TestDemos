@@ -26,7 +26,9 @@
         <activity android:name="com.jw.cameralibrary.ShotRecordMainActivity" />
         <activity android:name="com.jw.galarylibrary.img.ui.ImageGridActivity" />
         <activity android:name="com.jw.croplibrary.img.CropActivity" />
-		<activity android:name="com.jw.galarylibrary.img.ui.ImagePreviewActivity" />
+        <activity
+            android:name="com.jw.galarylibrary.img.ui.ImagePreviewActivity"
+            android:configChanges="orientation|screenSize" />
 		<activity
 			android:name="com.jw.galarylibrary.img.ui.ImagePreviewActivity2"
 			android:configChanges="orientation|screenSize" />
