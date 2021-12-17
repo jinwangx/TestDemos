@@ -8,12 +8,10 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.activity.BasePreviewActivity
 import com.jw.galarylibrary.base.adapter.BasePageAdapter
-import com.jw.galarylibrary.databinding.ActivityPreview2Binding
 import com.jw.galarylibrary.img.adapter.ImagePageAdapter
 import com.jw.library.model.ImageItem
 import com.jw.library.ui.BaseBindingActivity
@@ -37,7 +35,7 @@ class ImagePreviewActivity2 : BaseBindingActivity<ActivityPreview2Binding>(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setToolbar(findViewById(R.id.toolbar)!!)
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        //window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         //得到当前界面的装饰视图
         if (Build.VERSION.SDK_INT >= 21) {
             val decorView = window.decorView
