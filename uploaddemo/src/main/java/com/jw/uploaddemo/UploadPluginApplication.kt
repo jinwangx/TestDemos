@@ -1,7 +1,6 @@
 package com.jw.uploaddemo
 
 import android.app.Application
-import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Environment
 import com.jw.cameralibrary.CameraLibrary
@@ -22,7 +21,6 @@ class UploadPluginApplication : BaseApplication() {
         CropLibrary.init(this, externalCacheDir.absolutePath)
         VoiceLibrary.init(externalCacheDir.absolutePath)
         UploadLibrary.init(externalCacheDir.absolutePath)
-        initFFmpegBinary(this)
         if (RomUtil.isEmui()) {
             // 刷新相册
             MediaScannerConnection.scanFile(

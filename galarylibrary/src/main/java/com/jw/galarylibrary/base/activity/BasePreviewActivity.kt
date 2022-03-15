@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
@@ -42,7 +41,8 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
     ViewPager.OnPageChangeListener,
     ThumbPreviewAdapter.OnThumbItemClickListener<ITEM>,
     BasePicker.OnItemSelectedListener<ITEM>,
-    IPreview<ITEM> {
+    IPreview<ITEM>,
+    View.OnSystemUiVisibilityChangeListener {
 
     private var mPicker = picker
     lateinit var mItems: ArrayList<ITEM>
@@ -57,18 +57,12 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //得到当前界面的装饰视图
-        if (Build.VERSION.SDK_INT >= 21) {
-            val decorView = window.decorView
-            //设置让应用主题内容占据状态栏和导航栏
-            val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            decorView.systemUiVisibility = option
-            //设置状态栏和导航栏颜色为透明
-            window.statusBarColor = Color.TRANSPARENT
-            window.navigationBarColor = Color.TRANSPARENT
-        }
+        showSystemUI()
+        //设置状态栏和导航栏颜色为透明
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        window.decorView.setOnSystemUiVisibilityChangeListener(this)
+
         mCurrentPosition =
             intent.getIntExtra(EXTRA_SELECTED_ITEM_POSITION, 0)
         isFromItems = intent.getBooleanExtra(EXTRA_FROM_ITEMS, false)
@@ -139,40 +133,56 @@ abstract class BasePreviewActivity<ITEM : BaseItem>(picker: BasePicker<ITEM>) :
 
     override fun onPhotoTapListener(view: View, x: Float, y: Float) {
         when (top_bar.visibility) {
-            View.VISIBLE -> {
-                mBinding.apply {
-                    top_bar.animation =
-                        AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.top_out)
-                    bottomBar.animation =
-                        AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_out)
-                    top_bar.visibility = View.GONE
-                    bottomBar.visibility = View.GONE
-                    val decorView = window.decorView
-                    //设置让应用主题内容占据状态栏和导航栏
-                    val option = View.SYSTEM_UI_FLAG_FULLSCREEN or
-                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    decorView.systemUiVisibility = option
-                }
+            View.VISIBLE -> hideSystemUI()
+            View.GONE -> showSystemUI()
+        }
+    }
+
+    /**
+     * 隐藏状态栏和导航栏
+     */
+    private fun hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    }
+
+    /**
+     * 显示状态栏和导航栏
+     */
+    private fun showSystemUI() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+    }
+
+    override fun onSystemUiVisibilityChange(visibility: Int) {
+        if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
+            mBinding.apply {
+                top_bar.animation =
+                    AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.top_in)
+                bottomBar.animation =
+                    AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_in)
+                top_bar.visibility = View.VISIBLE
+                bottomBar.visibility = View.VISIBLE
             }
-            View.GONE -> {
-                mBinding.apply {
-                    top_bar.animation =
-                        AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.top_in)
-                    bottomBar.animation =
-                        AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_in)
-                    top_bar.visibility = View.VISIBLE
-                    bottomBar.visibility = View.VISIBLE
-                    val decorView = window.decorView
-                    //设置让应用主题内容占据状态栏和导航栏
-                    val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    decorView.systemUiVisibility = option
-                }
+        } else {
+            mBinding.apply {
+                top_bar.animation =
+                    AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.top_out)
+                bottomBar.animation =
+                    AnimationUtils.loadAnimation(this@BasePreviewActivity, R.anim.fade_out)
+                top_bar.visibility = View.GONE
+                bottomBar.visibility = View.GONE
             }
         }
     }
