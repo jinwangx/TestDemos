@@ -4,14 +4,12 @@ import android.content.Intent
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.jw.croplibrary.video.VideoTrimmerActivity
 import com.jw.galarylibrary.base.activity.BasePreviewActivity
 import com.jw.galarylibrary.video.VideoPicker
 import com.jw.galarylibrary.video.adapter.VideoPageAdapter
 import com.jw.library.model.VideoItem
 import com.jw.library.utils.ThemeUtils
 import java.io.File
-import java.util.*
 
 class VideoPreviewActivity : BasePreviewActivity<VideoItem>(VideoPicker),
     VideoPageAdapter.PhotoViewClickListener {
@@ -30,7 +28,6 @@ class VideoPreviewActivity : BasePreviewActivity<VideoItem>(VideoPicker),
     }
 
     override fun onEdit(item: VideoItem) {
-        VideoTrimmerActivity.start(this, item.path!!, item.name!!)
     }
 
     companion object {

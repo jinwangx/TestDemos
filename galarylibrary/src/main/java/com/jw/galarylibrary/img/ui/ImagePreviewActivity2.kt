@@ -12,11 +12,11 @@ import android.view.animation.AnimationUtils
 import com.jw.galarylibrary.R
 import com.jw.galarylibrary.base.activity.BasePreviewActivity
 import com.jw.galarylibrary.base.adapter.BasePageAdapter
+import com.jw.galarylibrary.databinding.ActivityPreview2Binding
 import com.jw.galarylibrary.img.adapter.ImagePageAdapter
 import com.jw.library.model.ImageItem
 import com.jw.library.ui.BaseBindingActivity
 import com.jw.library.utils.ThemeUtils
-import java.util.*
 
 /**
  * 创建时间：2021/4/309:09
